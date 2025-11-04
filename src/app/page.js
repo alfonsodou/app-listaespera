@@ -10,7 +10,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
-import Form from "react-bootstrap/Form";
+import Card from "react-bootstrap/Card";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function Home() {
@@ -40,12 +40,12 @@ export default function Home() {
         let providerEthers = new ethers.providers.Web3Provider(provider);
         let signer = providerEthers.getSigner();
         myContractListaEspera.current = new Contract(
-          "0x9C7e03e9aAe92863e29a5Bd5eb3E7356Cb11cD27",
+          "0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B",
           listaEsperaManifest.abi,
           signer
         );
         myContractTokenEspera.current = new Contract(
-          "0x82DB41D4a9F3fC17eAaa2E95ffe313205a128196",
+          "0xfa3f63c0143f66428ddfabdd2d0b7e09feae5e77",
           tokenEsperaManifest.abi,
           signer
         );
@@ -54,6 +54,7 @@ export default function Home() {
       }
     } catch (err) {
       const error = decodeError(err);
+      console.log(error);
       alert(error.error);
     }
   };
@@ -73,10 +74,50 @@ export default function Home() {
     }
   };
 
+  /**
+   * Comprar Token
+   */
+  let buyToken = async () => {
+    try {
+      const tx = await myContractTokenEspera.current.claimTokens();
+      await tx.wait();
+    } catch (err) {
+      const error = decodeError(err);
+      alert(error.error);
+    }
+  };
+
   return (
     <Container>
-      <h1>Hola mundo</h1>
-      <h2>Token Name: {tokenName}</h2>
+      <Row>
+        <Col>
+          <Alert>
+            <Alert.Heading>
+              <p align="center">
+                Bienvenido a la aplicación de Lista de Espera
+              </p>
+            </Alert.Heading>
+          </Alert>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Card style={{ width: "18rem" }}>
+            <Card.Body>
+              <Card.Title>Comprar {tokenName}</Card.Title>
+              <Card.Text>Comprar TokenEspera enviando tBNB</Card.Text>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  buyToken();
+                }}
+              >
+                Comprar!
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 }
