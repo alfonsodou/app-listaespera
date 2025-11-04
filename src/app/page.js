@@ -40,12 +40,12 @@ export default function Home() {
         let providerEthers = new ethers.providers.Web3Provider(provider);
         let signer = providerEthers.getSigner();
         myContractListaEspera.current = new Contract(
-          "0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B",
+          "0x8bEEcC63cED136695945486d954B0520Ceef6d62",
           listaEsperaManifest.abi,
           signer
         );
         myContractTokenEspera.current = new Contract(
-          "0xfa3f63c0143f66428ddfabdd2d0b7e09feae5e77",
+          "0x1505C3F9A8eaDA4c1DeF27053568d13d6BAe7A7d",
           tokenEsperaManifest.abi,
           signer
         );
@@ -79,7 +79,7 @@ export default function Home() {
    */
   let buyToken = async () => {
     try {
-      const tx = await myContractTokenEspera.current.claimTokens();
+      const tx = await myContractListaEspera.current.comprarToken();
       await tx.wait();
     } catch (err) {
       const error = decodeError(err);
@@ -105,7 +105,10 @@ export default function Home() {
           <Card style={{ width: "18rem" }}>
             <Card.Body>
               <Card.Title>Comprar {tokenName}</Card.Title>
-              <Card.Text>Comprar TokenEspera enviando tBNB</Card.Text>
+              <Card.Text>
+                Aprovecha esta oferta! Recibirás un token extra por cada uno que
+                ya tengas en tu cartera.
+              </Card.Text>
               <Button
                 variant="primary"
                 onClick={() => {
@@ -117,6 +120,7 @@ export default function Home() {
             </Card.Body>
           </Card>
         </Col>
+        
       </Row>
     </Container>
   );
