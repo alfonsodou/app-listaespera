@@ -41,12 +41,12 @@ export default function Home() {
         let providerEthers = new ethers.providers.Web3Provider(provider);
         let signer = providerEthers.getSigner();
         myContractListaEspera.current = new Contract(
-          "0x9813CB6ea72e45c189b074957a9a5629B2b0D318",
+          "0x2410aaAD9209F24550c3e1e09A6cEBe358C4A97f",
           listaEsperaManifest.abi,
           signer
         );
         myContractTokenEspera.current = new Contract(
-          "0x005C091834dF98d09531CD4eF186A99bcD93C0ec",
+          "0x52fb106EA2c248950bdDC9588Bc496E931DD9d53",
           tokenEsperaManifest.abi,
           signer
         );
@@ -93,7 +93,40 @@ export default function Home() {
     }
   };
 
+  /**
+   * Registrarse en la lista
+   */
+  let register = async () => {
+    try {
+      const tx = await myContractListaEspera.current.inscribirse();
+      await tx.wait();
 
+      await cargarDatos();
+    } catch (err) {
+      const error = decodeError(err);
+      alert(error.error);
+    }
+  };
+
+  /**
+   * Posición en la lista
+   */
+  let getPosition = async () => {
+    try {
+      const tx = await myContractListaEspera.current.numeroEnLista();
+      await tx.wait();
+
+      if (tx.isZero()) {
+        alert("Todavía no estás inscrito en la lista");
+      } else {
+        alert("Ocupas la " + tx.toString() + " posición de la lista");  
+      }
+
+    } catch (err) {
+      const error = decodeError(err);
+      alert(error.error);
+    }
+  };
 
   return (
     <Container>
@@ -115,8 +148,8 @@ export default function Home() {
               <Card.Title>Comprar {tokenName}</Card.Title>
               <Card.Text>
                 Aprovecha esta oferta! Recibirás un token extra por cada uno que
-                ya tengas en tu cartera.
-                Ahora mismo tienes {balance} {tokenName} en tu cartera.
+                ya tengas en tu cartera. Ahora mismo tienes {balance}{" "}
+                {tokenName} en tu cartera.
               </Card.Text>
               <Button
                 variant="primary"
@@ -132,17 +165,35 @@ export default function Home() {
         <Col>
           <Card style={{ width: "18rem" }}>
             <Card.Body>
-              <Card.Title>Saldo de {tokenName}</Card.Title>
+              <Card.Title>Registro en Lista Espera</Card.Title>
               <Card.Text>
-                Pulsa el botón para conocer tu saldo actual.
+                Para registrarte en la lista deberás enviar 1 {tokenName}
               </Card.Text>
               <Button
                 variant="primary"
                 onClick={() => {
-                  getBalance();
+                  register();
                 }}
               >
-                Saldo
+                Registrar
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col>
+          <Card style={{ width: "18rem" }}>
+            <Card.Body>
+              <Card.Title>Posición en Lista Espera</Card.Title>
+              <Card.Text>
+                Puedes consultar que posición ocupas en la lista
+              </Card.Text>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  getPosition();
+                }}
+              >
+                Posición
               </Button>
             </Card.Body>
           </Card>
