@@ -17,6 +17,7 @@ export default function Home() {
   const myContractListaEspera = useRef(null);
   const myContractTokenEspera = useRef(null);
   const [tokenName, setTokenName] = useState("");
+  const [balance, setBalance] = useState(0);
 
   useEffect(() => {
     let init = async () => {
@@ -40,12 +41,12 @@ export default function Home() {
         let providerEthers = new ethers.providers.Web3Provider(provider);
         let signer = providerEthers.getSigner();
         myContractListaEspera.current = new Contract(
-          "0x8bEEcC63cED136695945486d954B0520Ceef6d62",
+          "0x9813CB6ea72e45c189b074957a9a5629B2b0D318",
           listaEsperaManifest.abi,
           signer
         );
         myContractTokenEspera.current = new Contract(
-          "0x1505C3F9A8eaDA4c1DeF27053568d13d6BAe7A7d",
+          "0x005C091834dF98d09531CD4eF186A99bcD93C0ec",
           tokenEsperaManifest.abi,
           signer
         );
@@ -68,6 +69,9 @@ export default function Home() {
     try {
       let tokenNameTemp = await myContractTokenEspera.current.name();
       setTokenName(tokenNameTemp);
+
+      let balanceTemp = await myContractListaEspera.current.getBalance();
+      setBalance(ethers.utils.formatEther(balanceTemp));
     } catch (err) {
       const error = decodeError(err);
       alert(error.error);
@@ -81,11 +85,15 @@ export default function Home() {
     try {
       const tx = await myContractListaEspera.current.comprarToken();
       await tx.wait();
+
+      await cargarDatos();
     } catch (err) {
       const error = decodeError(err);
       alert(error.error);
     }
   };
+
+
 
   return (
     <Container>
@@ -108,6 +116,7 @@ export default function Home() {
               <Card.Text>
                 Aprovecha esta oferta! Recibirás un token extra por cada uno que
                 ya tengas en tu cartera.
+                Ahora mismo tienes {balance} {tokenName} en tu cartera.
               </Card.Text>
               <Button
                 variant="primary"
@@ -120,7 +129,24 @@ export default function Home() {
             </Card.Body>
           </Card>
         </Col>
-        
+        <Col>
+          <Card style={{ width: "18rem" }}>
+            <Card.Body>
+              <Card.Title>Saldo de {tokenName}</Card.Title>
+              <Card.Text>
+                Pulsa el botón para conocer tu saldo actual.
+              </Card.Text>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  getBalance();
+                }}
+              >
+                Saldo
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>        
       </Row>
     </Container>
   );
