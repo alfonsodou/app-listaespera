@@ -41,12 +41,12 @@ export default function Home() {
         let providerEthers = new ethers.providers.Web3Provider(provider);
         let signer = providerEthers.getSigner();
         myContractListaEspera.current = new Contract(
-          "0x2410aaAD9209F24550c3e1e09A6cEBe358C4A97f",
+          "0xAFAaC747e8F03FAAc45C4cFcdacdFCF79790053a",
           listaEsperaManifest.abi,
           signer
         );
         myContractTokenEspera.current = new Contract(
-          "0x52fb106EA2c248950bdDC9588Bc496E931DD9d53",
+          "0x1ADB33687932884ec6A9D7445446A00f9EF07B46",
           tokenEsperaManifest.abi,
           signer
         );
@@ -114,14 +114,12 @@ export default function Home() {
   let getPosition = async () => {
     try {
       const tx = await myContractListaEspera.current.numeroEnLista();
-      await tx.wait();
 
       if (tx.isZero()) {
         alert("Todavía no estás inscrito en la lista");
       } else {
-        alert("Ocupas la " + tx.toString() + " posición de la lista");  
+        alert("Ocupas la " + tx.toString() + " posición de la lista");
       }
-
     } catch (err) {
       const error = decodeError(err);
       alert(error.error);
@@ -197,7 +195,7 @@ export default function Home() {
               </Button>
             </Card.Body>
           </Card>
-        </Col>        
+        </Col>
       </Row>
     </Container>
   );
