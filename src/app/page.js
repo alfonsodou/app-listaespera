@@ -41,12 +41,12 @@ export default function Home() {
         let providerEthers = new ethers.providers.Web3Provider(provider);
         let signer = providerEthers.getSigner();
         myContractListaEspera.current = new Contract(
-          "0xAFAaC747e8F03FAAc45C4cFcdacdFCF79790053a",
+          "0x8Fc95A4F80EbfC82C12f26d2c07Eff3dD14b7738",
           listaEsperaManifest.abi,
           signer
         );
         myContractTokenEspera.current = new Contract(
-          "0x1ADB33687932884ec6A9D7445446A00f9EF07B46",
+          "0x856C2f0cf914e1c27081141e33B4A9C2Fb2348eC",
           tokenEsperaManifest.abi,
           signer
         );
@@ -126,6 +126,44 @@ export default function Home() {
     }
   };
 
+  /**
+   * Retirar primer inscrito de la lista
+   */
+  let unregisterAdmin = async () => {
+    try {
+      let result = await myContractListaEspera.current.retirarUsuarioAdmin();
+
+      if (result) {
+        alert("Primer usuario de la lista retirado");
+      } else {
+        alert("Ocurrió un problema al eliminar el primer usuario de la lista");
+      }
+    } catch (err) {
+      const error = decodeError(err);
+      alert(error.error);
+    }
+  };
+
+  /**
+   * Retirar usuario de la lista
+   */
+  let unregister = async () => {
+    try {
+      let result = await myContractListaEspera.current.retirarUsuario();
+
+      if (result) {
+        alert("Retirado correctamente de la lista");
+      } else {
+        alert("Ocurrió un error al retirarte de la lista");
+      }
+
+      await cargarDatos();
+    } catch (err) {
+      const error = decodeError(err);
+      alert(error.error);
+    }
+  };
+
   return (
     <Container>
       <Row>
@@ -192,6 +230,43 @@ export default function Home() {
                 }}
               >
                 Posición
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col>
+          <Card style={{ width: "18rem" }}>
+            <Card.Body>
+              <Card.Title>Retirar primer usuario lista</Card.Title>
+              <Card.Text>Solo puede ejecutarlo el propietario</Card.Text>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  unregisterAdmin();
+                }}
+              >
+                Retirar
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Card style={{ width: "18rem" }}>
+            <Card.Body>
+              <Card.Title>Retirarme de la lista</Card.Title>
+              <Card.Text>
+                Se te devolverá la mitad de los {tokenName} requeridos para
+                registrarte
+              </Card.Text>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  unregister();
+                }}
+              >
+                Retirarme
               </Button>
             </Card.Body>
           </Card>
